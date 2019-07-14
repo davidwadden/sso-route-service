@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 the original author or authors.
+ * Copyright 2016-2019 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.cloudfoundry.example;
+package io.pivotal.portal.ssoproxy;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +32,11 @@ import reactor.core.publisher.Mono;
 
 import static org.springframework.http.HttpHeaders.HOST;
 
+@SuppressWarnings("unused")
 @RestController
-final class Controller {
+final class ForwardController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ForwardController.class);
 
     static final String FORWARDED_URL = "X-CF-Forwarded-Url";
 
@@ -41,32 +44,30 @@ final class Controller {
 
     static final String PROXY_SIGNATURE = "X-CF-Proxy-Signature";
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final WebClient webClient;
 
-    Controller(WebClient webClient) {
+    ForwardController(WebClient webClient) {
         this.webClient = webClient;
     }
 
     @RequestMapping(headers = {FORWARDED_URL, PROXY_METADATA, PROXY_SIGNATURE})
     Mono<ResponseEntity<Flux<DataBuffer>>> service(ServerHttpRequest request) {
 
-        this.logger.info("Incoming Request:  {}", formatRequest(request.getMethod(), request.getURI().toString(), request.getHeaders()));
+        logger.info("Incoming Request:  {}", formatRequest(request.getMethod(), request.getURI().toString(), request.getHeaders()));
 
         String forwardedUrl = getForwardedUrl(request.getHeaders());
         HttpHeaders forwardedHttpHeaders = getForwardedHeaders(request.getHeaders());
 
-        this.logger.info("Outgoing Request:  {}", formatRequest(request.getMethod(), forwardedUrl, forwardedHttpHeaders));
+        logger.info("Outgoing Request:  {}", formatRequest(request.getMethod(), forwardedUrl, forwardedHttpHeaders));
 
-        return this.webClient
+        return webClient
             .method(request.getMethod())
             .uri(forwardedUrl)
             .headers(headers -> headers.putAll(forwardedHttpHeaders))
             .body((outputMessage, context) -> outputMessage.writeWith(request.getBody()))
             .exchange()
             .map(response -> {
-                this.logger.info("Outgoing Response: {}", formatResponse(response.statusCode(), response.headers().asHttpHeaders()));
+                logger.info("Outgoing Response: {}", formatResponse(response.statusCode(), response.headers().asHttpHeaders()));
 
                 return ResponseEntity
                     .status(response.statusCode())

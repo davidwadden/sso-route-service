@@ -23,7 +23,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.cloudfoundry.example" level="${LOGGING_LEVEL:-INFO}"/>
+    <logger name="io.pivotal.portal" level="${LOGGING_LEVEL:-INFO}"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>
