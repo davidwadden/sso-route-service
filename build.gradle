@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.0.4.RELEASE'
+    id 'org.springframework.boot' version '2.1.6.RELEASE'
     id 'java'
 }
 
@@ -14,13 +14,14 @@ repositories {
 }
 
 ext {
-    set('springBootVersion', "2.0.4.RELEASE")
     set('okhttpVersion', "3.11.0")
 }
 
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 dependencyManagement {
 	imports {
-		mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+		mavenBom(SpringBootPlugin.BOM_COORDINATES)
 	}
     dependencies {
         dependency("com.squareup.okhttp3:mockwebserver:${okhttpVersion}")
