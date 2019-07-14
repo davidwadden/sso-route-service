@@ -1,0 +1,36 @@
+plugins {
+    id 'org.springframework.boot' version '2.0.4.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'io.pivotal.portal'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springBootVersion', "2.0.4.RELEASE")
+    set('okhttpVersion', "3.11.0")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+	}
+    dependencies {
+        dependency("com.squareup.okhttp3:mockwebserver:${okhttpVersion}")
+    }
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-actuator")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.squareup.okhttp3:mockwebserver")
+}

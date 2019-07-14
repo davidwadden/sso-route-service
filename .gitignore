@@ -1,4 +1,14 @@
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### IntelliJ IDEA ###
 .idea/libraries
 .idea/tasks.xml
 .idea/workspace.xml
-target
+out/
+
+### VS Code ###
+.vscode/
