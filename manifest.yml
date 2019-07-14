@@ -1,5 +1,12 @@
 ---
 applications:
-- name: route-service-example
-  random-route: true
-  path: target/route-service-1.0.0.BUILD-SNAPSHOT.jar
+  - name: sso-proxy
+    instances: 1
+    memory: 1G
+    disk: 1G
+    path: build/libs/sso-route-service-0.0.1-SNAPSHOT.jar
+    buildpacks:
+      - java_buildpack
+    stack: cflinuxfs3
+    routes:
+      - route: sso-proxy-sso-development.apps-domain
